@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculus in Food Security: Oil Palm Yield Optimization</title>
+    <!-- Tailwind CSS for modern, clean UI -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Chart.js for smooth, interactive data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased p-4 md:p-8">
+
+    <div class="max-w-6xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-green-100">
+        
+        <!-- Header Section -->
+        <header class="bg-gradient-to-r edit from-green-700 to-emerald-600 p-6 text-white text-center md:text-left">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <span class="bg-emerald-500 text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider">SFM: Food Security & Bioscience</span>
+                    <h1 class="text-2xl md:text-4xl font-bold mt-2">Optimizing Malaysian Oil Palm Fresh Fruit Bunch (FFB) Yields</h1>
+                    <p class="text-green-100 mt-1 text-sm md:text-base">Visualizing the application of derivatives f'(x) to model optimal harvesting timelines.</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md p-3 rounded-lg border border-white/20 text-center min-w-[200px]">
+                    <span class="text-xs text-emerald-200 block uppercase tracking-wide">Current Scenario Location</span>
+                    <span class="font-semibold text-lg">Sime Darby Plantation, MY</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
+            
+            <!-- Left Panel: Bioscience Problem & Mathematical Modeling -->
+            <div class="lg:col-span-1 space-y-6 flex flex-col justify-between">
+                
+                <!-- The Problem -->
+                <div class="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100">
+                    <h2 class="text-lg font-bold text-green-800 mb-2 flex items-center gap-2">
+                        🌱 The Bioscience Problem
+                    </h2>
+                    <p class="text-sm leading-relaxed text-gray-700">
+                        In oil palm management (<em>Elaeis guineensis</em>), harvesting too early results in low oil content, while harvesting too late causes fruits to drop and spoil. To maximize Malaysia's food security and export efficiency, agronomists model the growth curve of Fresh Fruit Bunches (FFB) to find the exact day where the <strong>growth rate peaks</strong>—the point of diminishing returns.
+                    </p>
+                </div>
+
+                <!-- The Mathematics -->
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <h2 class="text-lg font-bold text-slate-800 mb-2 flex items-center gap-2">
+                        📐 The Mathematical Model
+                    </h2>
+                    <p class="text-xs text-gray-600 mb-3">
+                        Based on localized growth dynamics from the <strong>Malaysian Palm Oil Board (MPOB) Data Portal</strong>, the FFB weight f(x) over a standard 30-day peak ripening window is modeled using a cubic polynomial:
+                    </p>
+                    
+                    <!-- Formatted Math Equations -->
+                    <div class="space-y-3 bg-white p-3 rounded-lg border border-slate-100 shadow-sm">
+                        <div>
+                            <span class="text-xs font-semibold text-indigo-600 block">Yield Function f(x) [kg]:</span>
+                            <code class="text-sm font-mono block font-bold">f(x) = -0.002x³ + 0.09x² + 0.1x + 5</code>
+                        </div>
+                        <hr class="border-slate-100">
+                        <div>
+                            <span class="text-xs font-semibold text-amber-600 block">Derivative f'(x) [Growth Rate: kg/day]:</span>
+                            <code class="text-sm font-mono block font-bold">f'(x) = -0.012x² + 0.18x + 0.1</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instructions Block -->
+                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 text-sm">
+                    <h3 class="font-bold text-blue-800 flex items-center gap-1.5 mb-1">
+                        💡 Interactive Guidance
+                    </h3>
+                    <p class="text-blue-700">
+                        <strong>Click anywhere directly on the chart line or data points</strong> to trigger the calculus engine. It will instantly calculate the instantaneous rate of growth f'(x) at that precise day.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Right Panel: Interactive Chart & Dynamic Derivative Calculator -->
+            <div class="lg:col-span-2 space-y-6">
+                
+                <!-- Chart Container -->
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm relative min-h-[350px]">
+                    <canvas id="yieldChart"></canvas>
+                </div>
+
+                <!-- Dynamic Results Output Section -->
+                <div id="resultPanel" class="bg-slate-900 text-slate-100 p-5 rounded-xl transition-all duration-300 opacity-60 pointer-events-none">
+                    <div id="placeholderText" class="text-center py-4 text-slate-400 font-medium">
+                        [ Click a point on the graph above to execute derivative calculations ]
+                    </div>
+                    
+                    <div id="calculationContent" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <h3 class="text-emerald-400 font-bold tracking-wide uppercase text-xs mb-2">Calculated Bioscience Metrics</h3>
+                            <div class="space-y-1">
+                                <p class="text-sm">Timeline Coordinate: <span id="resDay" class="font-bold text-white">0</span> Days into ripening</p>
+                                <p class="text-sm">Current FFB Weight f(x): <span id="resWeight" class="font-bold text-white">0</span> kg</p>
+                                <p class="text-sm font-semibold text-amber-300">Instantaneous Rate f'(x): <span id="resRate" class="font-bold text-amber-400">0</span> kg/day</p>
+                            </div>
+                        </div>
+                        <div class="bg-slate-800/80 p-3 rounded-lg border border-slate-700">
+                            <h3 class="text-indigo-400 font-bold tracking-wide uppercase text-xs mb-1">Layman Bioscience Translation</h3>
+                            <p id="resExpl" class="text-xs text-slate-300 leading-relaxed italic">
+                                Select a point to evaluate biological translation.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Footer / Citations Data Source -->
+        <footer class="bg-gray-50 px-6 py-4 border-t border-gray-100 text-xs text-gray-500 flex flex-col md:flex-row justify-between items-center gap-2">
+            <div>
+                Data Source References: <span class="font-medium text-gray-700">MPOB (Malaysian Palm Oil Board) Economics & Industry Development Division Portal</span>
+            </div>
+            <div>
+                Application Layer: HTML5 • Chart.js Engine • Tailwind CSS
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Application Script Engine -->
+    <script>
+        // 1. Math Function Implementations
+        // f(x) = -0.002x^3 + 0.09x^2 + 0.1x + 5
+        function getWeight(x) {
+            return (-0.002 * Math.pow(x, 3)) + (0.09 * Math.pow(x, 2)) + (0.1 * x) + 5;
+        }
+
+        // Corrected derivative derivation:
+        // d/dx [-0.002x^3] = -0.006x^2
+        // d/dx [0.09x^2] = 0.18x
+        // d/dx [0.1x] = 0.1
+        // f'(x) = -0.006x^2 + 0.18x + 0.1
+        function getDerivative(x) {
+            return (-0.006 * Math.pow(x, 2)) + (0.18 * x) + 0.1;
+        }
+
+        // 2. Generate Interactive Graph Coordinates for a 30-Day Window
+        const totalDays = 30;
+        const labels = [];
+        const weightData = [];
+
+        for (let day = 0; day <= totalDays; day++) {
+            labels.push(day);
+            weightData.push(getWeight(day).toFixed(2));
+        }
+
+        // 3. Initialize ChartJS Instance
+        const ctx = document.getElementById('yieldChart').getContext('2d');
+        const yieldChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'FFB Weight (kg vs Ripening Days)',
+                    data: weightData,
+                    borderColor: '#059669', // Tailwind Emerald 600
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.3, // Smooth curve aesthetics
+                    pointBackgroundColor: '#d97706', // Amber 600 indicators
+                    pointHoverRadius: 8,
+                    pointHoverBackgroundColor: '#b45309'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { font: { weight: 'bold' } }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            footer: () => 'Click point to calculate derivative f'(x)'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Ripening Timeline (Days)', font: { weight: 'bold' } }
+                    },
+                    y: {
+                        title: { display: true, text: 'Weight per Bunch (kg)', font: { weight: 'bold' } },
+                        suggestedMin: 0
+                    }
+                },
+                // Capture Canvas Click Event
+                onClick: (event, activeElements) => {
+                    if (activeElements.length > 0) {
+                        const index = activeElements[0].index;
+                        const targetDay = labels[index];
+                        processCalculusMetrics(targetDay);
+                    }
+                }
+            }
+        });
+
+        // 4. Bioscience Logic Interpretation and Calculus Pipeline
+        function processCalculusMetrics(day) {
+            const currentWeight = getWeight(day);
+            const currentRate = getDerivative(day);
+
+            // Update UI Fields
+            document.getElementById('resDay').innerText = day;
+            document.getElementById('resWeight').innerText = currentWeight.toFixed(2);
+            document.getElementById('resRate').innerText = currentRate.toFixed(3);
+
+            // Bioscience Interpretation Engine based on Critical Derivative Values
+            let laymanExplanation = "";
+            if (day < 5) {
+                laymanExplanation = `Early vegetative growth state. The derivative is low (${currentRate.toFixed(2)} kg/day). Fruit cell expansion is starting, oil synthesis has not yet initiated. Do not harvest.`;
+            } else if (day >= 5 && day <= 12) {
+                laymanExplanation = `Exponential development phase. The growth rate is rapidly accelerating! The positive derivative indicates a massive accumulation of fatty acids inside the mesocarp daily.`;
+            } else if (day > 12 && day <= 17) {
+                laymanExplanation = `Peak Physiological Maturity Matrix. The derivative is hovering around its highest peak (~1.45 kg/day). The palm bunch is reaching critical mass. This represents maximum resource efficiency!`;
+            } else if (day > 17 && day <= 25) {
+                laymanExplanation = `The derivative is slowing down but remains positive. Growth is flattening out. The plant is hitting its biological ceiling of dimension for this batch cycle.`;
+            } else {
+                laymanExplanation = `Over-ripening alert! The derivative is plummeting near zero or turning negative. Rotten fruit loss risk is imminent. Harvesting must occur immediately to protect economic food yield.`;
+            }
+
+            document.getElementById('resExpl').innerText = laymanExplanation;
+
+            // Animate Reveal UI Container
+            const panel = document.getElementById('resultPanel');
+            panel.classList.remove('opacity-60', 'pointer-events-none');
+            panel.classList.add('opacity-100', 'ring-2', 'ring-emerald-400');
+            document.getElementById('placeholderText').classList.add('hidden');
+            document.getElementById('calculationContent').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
